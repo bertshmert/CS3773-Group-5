@@ -6,8 +6,15 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+<<<<<<< Updated upstream
 from django.control.auth.models import User
 import uuid
+=======
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+import uuid
+
+>>>>>>> Stashed changes
 
 class Category(models.Model):
     cat_id = models.PositiveIntegerField(primary_key=True)
@@ -88,6 +95,7 @@ class Product(models.Model):
 #        managed = False
         db_table = 'PRODUCT'
 
+<<<<<<< Updated upstream
     class Cart(models.Model):
      #   id = models.UUIDField(default=uuid.uuid4, primary_key=True)
         id = models.PositiveIntegerField(primary_key=True)
@@ -96,6 +104,26 @@ class Product(models.Model):
 
         def __str__(self):
             return str(self.id)
+=======
+class Cart(models.Model):
+    cart_id = models.UUIDField(default= uuid.uuid4, primary_key=True)
+    user_profile = models.OneToOneField('UserProfile', on_delete=models.CASCADE)
+    products = models.ManyToManyField(Product)
+    completed = models.BooleanField(default=False)
+    def __str__(self):
+        return f"Cart for {self.user_profile.user.username}"
+
+class CartItem(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='items')
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='cartitems')
+    quantity = models.IntegerField(default=0)
+    
+    def __str__(self):
+        return self.product.name
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+>>>>>>> Stashed changes
     
     class CartItem(models.Model):
         product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='items')

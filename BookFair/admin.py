@@ -20,3 +20,10 @@ class InvoiceAdmin(admin.ModelAdmin):
 @admin.register(m.Customer)
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ["cus_id", "cus_email"]
+
+@admin.register(m.Cart)
+class CartAdmin(admin.ModelAdmin):
+    list_display = ["cart_id"]
+    
+@admin.register(m.CartItem)
+#class CartItemAdmin(admin.modelAdmin):
