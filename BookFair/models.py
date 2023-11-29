@@ -9,6 +9,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.conf import settings
+from django.urls import reverse
 
 
 class Category(models.Model):
@@ -97,6 +98,7 @@ class Product(models.Model):
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ManyToManyField(Product)
+    prodName = models.CharField(max_length =255)
     quantity = models.IntegerField(default=1)
     
     def __str__(self):
@@ -104,3 +106,7 @@ class Cart(models.Model):
      
     def get_absolute_url(self):
       return reverse("BookFair:cart_detail")
+    
+    class Meta:
+#        managed = False
+      db_table = 'CART'

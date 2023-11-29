@@ -69,13 +69,13 @@ def product(request, prod_id):
       "product": product,
       }
     #########
-    #context['form'] = form
+    context['form'] = form
     return render(request, "BookFair/product.html", {"product": req_product})
     #return render(request, "BookFair/product.html", context)
 
 @login_required
 def add_to_cart(request, product_id):
-    #cart_item  = BookFair.objects.filter(user=request.user, product=product_id).first()
+    #cart_item  = Cart.objects.filter(Q(user=request.user, product=product_id)).first()
     cart_item = get_object_or_404(Product, pk=product_id)
     if cart_item:
       #  cart_item.quantity += 1
