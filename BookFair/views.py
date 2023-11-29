@@ -13,7 +13,11 @@ from django.urls import reverse
 from django.views.generic.edit import FormView
 
 # Model packages
+<<<<<<< Updated upstream
 from BookFair.models import Customer, Category, Product#,  Cart, UserProfile
+=======
+from BookFair.models import Customer, Category, Product, Cart
+>>>>>>> Stashed changes
 # Form packages
 from BookFair.forms import SearchBoxNav, SearchBoxFull, CustomerSignupForm, LoginForm
 # Python packages
@@ -57,9 +61,20 @@ def category(request, cat_id):
 
 def product(request, prod_id):
     req_product = get_object_or_404(Product, pk=prod_id)
-
+    ######### Sketch code
+    if request.method == "POST":
+            message.succes(request, f"{prod_name} added to your cart.")
+            return redirect("cart:add_to_cart", product_id=prod_prod_id)
+#    else:
+#      message.info(request, f"NOT A FORM")
+    context = { 
+      "product": product,
+      }
+    #########
     return render(request, "BookFair/product.html", {"product": req_product})
+    #return render(request, "BookFair/product.html", context)
 
+<<<<<<< Updated upstream
 # def add_to_cart(request, prod_id):
 #     product = get_object_or_404(Product, pk=prod_id)
 #     user_profile = UserProfile.objects.get(user=request.user)
@@ -81,6 +96,45 @@ def product(request, prod_id):
 #     cart = user_profile.cart
 #     cart_products = cart.products.all()
 #     return render(request, 'BookFair/view_cart.html', {'cart_products': cart_products})
+=======
+@login_required
+def add_to_cart(request, prod_id):
+    cart_item  = Cart.objects.filter(user=request.user, product=prod_id).first()
+    
+    if cart_item:
+        cart_item.quantity += 1
+        cart_item.save()
+        message.success(request, "Item added to your cart.")
+    else:
+        Cart.objects.create(user=request.user, product=prod_id)
+        message.success(request, "Item added to your cart.")
+
+    return redirect("cart:cart_detail")
+
+@login_required
+def remove_from_cart(request, cart_item_id):
+     cart_item = get_object_or_404(Cart, id=cart_item_id)
+
+     if cart_item.delete == request.user:
+       cart_item.delete()
+       message.success(request, "Item removed from your cart.")
+     
+     return redirect("cart:cart_detail")
+
+
+@login_required
+def cart_detail(request):
+    cart_items = Cart.Objects.filter(user=request.user)
+    total_price = sum(item.quantity * item.product.price for item in cart_items)
+
+    context = {
+            "cart_items": cart_items,
+            "total_price": total_price,
+        }
+
+    return render(request, "cart/cart_detail.html",context)
+
+>>>>>>> Stashed changes
 
 def profile(request):
     # Get customer that corresponds to signed-in user

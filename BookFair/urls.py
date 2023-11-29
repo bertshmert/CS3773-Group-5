@@ -23,6 +23,16 @@ urlpatterns = [
     # Log out page
     path('logout/', views.LogoutView, name='logout'),
     # Search page
+<<<<<<< Updated upstream
     path('search/', views.search, name='search')
+=======
+    path('search/', views.search, name='search'),
+    # add to cart
+    path("add<int:prod_id>/", views.add_to_cart, name="add_to_cart"),
+    # remove from cart
+    path("remove/<int:cart_item_id>/", views.remove_from_cart, name="remove_from_cart"),
+    # Detail page
+    path("", views.cart_detail, name="cart_detail")
+>>>>>>> Stashed changes
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # Warning: this will not work outside of debug mode!
 # See: https://docs.djangoproject.com/en/4.2/howto/static-files/ and https://docs.djangoproject.com/en/4.2/howto/static-files/deployment/
