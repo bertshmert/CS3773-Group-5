@@ -99,7 +99,7 @@ def remove_from_cart(request, cart_item_id):
 @login_required
 def cart_detail(request):
     cur_customer = Customer.objects.get(user=request.user)
-    cart_items = Cart.objects.filter(Q(customer=cur_customer))
+    cart_items = Cart.objects.filter(Q(cust=cur_customer))
     #cart_item = get_object_or_404(Product, pk=product_id)
     total_item_prices = [sum(item.quantity * item.product.price) for item in cart_items]
     item_prices = None
