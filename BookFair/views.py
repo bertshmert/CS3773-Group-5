@@ -109,7 +109,7 @@ def cart_detail(request):
            # "total_price": total_price,
         }
 
-    return render(request, "BookFair/cart_detail.html",context)
+    return render(request, "BookFair/cart_detail.html", context)
 
 
 def profile(request):

@@ -31,6 +31,6 @@ urlpatterns = [
     # remove from cart
     path("remove/<int:cart_item_id>/", views.remove_from_cart, name="remove_from_cart"),
     # Detail page
-    path("", views.cart_detail, name="cart_detail")
+    path("cart-detail/", views.cart_detail, name="cart_detail")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # Warning: this will not work outside of debug mode!
 # See: https://docs.djangoproject.com/en/4.2/howto/static-files/ and https://docs.djangoproject.com/en/4.2/howto/static-files/deployment/
