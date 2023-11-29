@@ -1,9 +1,21 @@
 # Django packages
 from django.shortcuts import render, HttpResponse, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login, authenticate
+from django.contrib import messages
+from django.db.models import Q
+
 # Model packages
-from BookFair.models import Category, Product
+from BookFair.models import Category, Product,  Cart, UserProfile, CustomUserCreationForm, CartItem
+# Form packages
+from BookFair.forms import SearchBoxNav, SearchBoxFull
 # Python packages
 import random
+from functools import reduce
+import operator
+# Logger
+import logging
 
 # Create your views here.
 def home(request):
@@ -33,7 +45,7 @@ def category(request, cat_id):
         case "stock-hl":
             cat_products_sorted = cat_products.order_by('-prod_stock')
         case _:
-            cat_products_sorted = cat_products.order_by('prod_id').all()
+            cat_products_sorted = cat_products.order_by('prod_name').all()
 
     return render(request, "BookFair/category.html", {"category": req_category, "cat_products": cat_products_sorted})
 
@@ -42,8 +54,6 @@ def product(request, prod_id):
 
     return render(request, "BookFair/product.html", {"product": req_product})
 
-<<<<<<< Updated upstream
-=======
 def add_to_cart(request, prod_id):
     product = get_object_or_404(Product, pk=prod_id)
     user_profile = UserProfile.objects.get(user=request.user)
@@ -67,9 +77,9 @@ def view_cart(request):
     return render(request, 'BookFair/view_cart.html', {'cart_products': cart_products})
 
 def cart(request):
-    #user_profile = UserProfile.objects.get(user=request.user)
-    #cart = user_profile.cart
-    #cart_products = cart.products.all()
+    user_profile = UserProfile.objects.get(user=request.user)
+    cart = user_profile.cart
+    cart_products = cart.products.all()
     return render(request, 'BookFair/cart.html', {'cart_products': cart_products})
 
 
@@ -77,6 +87,74 @@ def user_profile(request):
     user = request.user
     return render(request, 'BookFair/user_profile.html', {'user': user})
 
->>>>>>> Stashed changes
 def signup_profile(request):
-    return render(request, 'BookFair/signup_profile.html')
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, 'Account created successfully!')
+            return redirect('user_profile')
+        else:
+            messages.error(request, 'Error creating your account. Please check the provided information.')
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'BookFair/signup_profile.html', {'form': form})
+
+# Search
+def search(request):
+    # The search query is to be submitted as a GET request
+    search_form_full = SearchBoxFull()
+    # Initialize query, query_results to none
+    query = None
+    query_results_sorted = None
+
+    # Get the query in the GET request
+    if request.GET.get('q'):
+        # Make a form object and include the data in the request for validation
+        ## First attempt it with SearchBoxFull (also setting search_form_full to fill it in w/ user value)
+        search_form = search_form_full = SearchBoxFull(request.GET)
+        ## Check if the form is not valid -- if it isn't, update it to check the nav form submission
+        if not search_form.is_valid():
+            search_form = SearchBoxNav(request.GET)
+        ## Finally, if the form is valid on either try, get its query; if it's not, log an error.
+        if search_form.is_valid():
+            query = search_form.cleaned_data['q']
+
+            # Separate query into tokens for word-by-word matching -- inspired by https://stackoverflow.com/questions/28278150/mysql-efficient-search-with-partial-word-match-and-relevancy-score-fulltext
+            query_tokens = query.split()
+
+            query_results = Product.objects.filter(
+                # Q(prod_name__icontains = token)
+                reduce(operator.or_, [Q(prod_name__icontains = token) for token in query_tokens])
+                |
+                reduce(operator.or_, [Q(prod_descript__icontains = token) for token in query_tokens])
+                # Q(prod_descript__icontains = query)
+            )
+
+            # Sort time
+            # Try to get sort -- if it's not in the POST request, just order it by name
+            try:
+                sort = search_form.cleaned_data['sort']
+
+                match sort:
+                    case "name":
+                        query_results_sorted = query_results.order_by('prod_name')
+                    case "price-lh":
+                        query_results_sorted = query_results.order_by('prod_price')
+                    case "price-hl":
+                        query_results_sorted = query_results.order_by('-prod_price')
+                    case "stock-lh":
+                        query_results_sorted = query_results.order_by('prod_stock')
+                    case "stock-hl":
+                        query_results_sorted = query_results.order_by('-prod_stock')
+                    case _:
+                        query_results_sorted = query_results.order_by('prod_name')
+            except KeyError:
+                query_results_sorted = query_results.order_by('prod_name')
+        else:
+            logging.error('Invalid search form!')
+    else:
+        logging.error('No search query given!') # TODO: make a real "invalid search/no search given" page
+
+    return render(request, "BookFair/search.html", {'search_form': search_form_full, 'search_results': query_results_sorted, 'query': query})
