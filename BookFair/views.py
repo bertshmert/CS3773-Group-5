@@ -101,12 +101,12 @@ def cart_detail(request):
     cur_customer = Customer.objects.get(user=request.user)
     cart_items = Cart.objects.filter(Q(cust=cur_customer))
     #cart_item = get_object_or_404(Product, pk=product_id)
-    total_item_prices = [sum(item.quantity * item.product.price) for item in cart_items]
+    total_price = sum(item.quantity * item.product.price) for item in cart_items
     item_prices = None
 
     context = {
             "cart_items": cart_items,
-            "total_item_prices": total_item_prices,
+            "total_price": total_price,
         }
 
     return render(request, "BookFair/cart_detail.html", context)
