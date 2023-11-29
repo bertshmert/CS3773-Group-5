@@ -13,7 +13,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for item in cart_items %}
+				{% for i, item in enumerate(cart_items) %}
 					<tr>
 						 <td>{{ item.product }}</td>
 						<td>{{ item.quantity }}</td>
@@ -27,7 +27,7 @@
 				<tr>
 					<td colspan = "3"></td>
 					<td>Total:</td>
-					<td>{{ total_price }}</td>
+					<td>{{ total_item_prices[i] }}</td>
 				</tr>
 			</tfoot>
 		</table>

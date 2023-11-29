@@ -102,11 +102,12 @@ def remove_from_cart(request, cart_item_id):
 def cart_detail(request):
     cart_items = Cart.objects.filter(Q(user=request.user))
     #cart_item = get_object_or_404(Product, pk=product_id)
-    #total_price = sum(item.quantity * item.product.price for item in cart_items)
+    total_item_prices = [sum(item.quantity * item.product.price) for item in cart_items]
+    item_prices = None
 
     context = {
             "cart_items": cart_items,
-           # "total_price": total_price,
+            "total_item_prices": total_item_prices,
         }
 
     return render(request, "BookFair/cart_detail.html", context)
