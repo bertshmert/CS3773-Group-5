@@ -15,7 +15,7 @@
     </div>
     <div class="col-12 d-flex justify-content-center align-items-center gap-3 mt-5">
         <p class="fs-4 text-secondary">
-            Find your profile <a href="{% url 'profile' %}">here.</a>
+            Find your profile <a href="{% url 'BookFair:profile' %}">here.</a>
         </p>
     </div>
 {% else %}
@@ -39,7 +39,7 @@
     {% endif %}
     <div class="col-md-6 offset-md-3 login-form">
         <h2 class="text-center">Sign up</h2>
-        <form class="row g-3" method="post" action="{% url 'signup' %}">
+        <form class="row g-3" method="post" action="{% url 'BookFair:signup' %}">
             {% csrf_token %}
             <h3>Sign-in details</h3>
             <p class="my-0">

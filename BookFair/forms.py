@@ -3,7 +3,12 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from BookFair.models import Customer
+from BookFair.models import Customer, Product
+
+class ProductForm(forms.ModelForm):
+  class Meta:
+    model = Product
+    fields = ['prod_id']
 
 class SearchBoxNav(forms.Form):
     q = forms.CharField(

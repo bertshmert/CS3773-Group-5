@@ -94,20 +94,6 @@ class Product(models.Model):
 #        managed = False
         db_table = 'PRODUCT'
 
-<<<<<<< Updated upstream
-# class Cart(models.Model):
-#     user_profile = models.OneToOneField('UserProfile', on_delete=models.CASCADE)
-#     products = models.ManyToManyField(Product)
-
-#     def __str__(self):
-#         return f"Cart for {self.user_profile.user.username}"
-
-# class UserProfile(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    
-#     def __str__(self):
-#         return self.user.username
-=======
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ManyToManyField(Product)
@@ -117,5 +103,4 @@ class Cart(models.Model):
       return f"{self.quantity} x {self.product}"
      
     def get_absolute_url(self):
-      return reverse("cart:cart_detail")
->>>>>>> Stashed changes
+      return reverse("BookFair:cart_detail")
