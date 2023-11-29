@@ -12,8 +12,6 @@ from django.db.models import Q
 from django.urls import reverse
 from django.views.generic.edit import FormView
 from BookFair.forms import ProductForm
-from BookFair.models import Cart
-
 # Model packages
 from BookFair.models import Customer, Category, Product, Cart
 # Form packages

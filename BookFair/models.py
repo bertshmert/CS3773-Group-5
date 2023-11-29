@@ -96,9 +96,8 @@ class Product(models.Model):
         db_table = 'PRODUCT'
 
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ManyToManyField(Product)
-    prodName = models.CharField(max_length =255)
+    cust = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
     
     def __str__(self):
